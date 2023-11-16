@@ -1,4 +1,4 @@
-package demo.springframework.spring6webapp2.controllers.i18n;
+package demo.springframework.spring6webapp2.controllers.env;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,13 +7,15 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles({"EN", "default"})
 @SpringBootTest
-class Myi18NControllerTestES {
+class EnvironmentTestDefault {
 
     @Autowired
-    Myi18NController myi18NController;
+    EnvironmentController environmentController;
+
 
     @Test
-    void sayHello() {
-        System.out.println(myi18NController.sayHello());
+    void getEnvDatasource() {
+        System.out.println(environmentController.getEnvDatasource());
     }
+
 }
