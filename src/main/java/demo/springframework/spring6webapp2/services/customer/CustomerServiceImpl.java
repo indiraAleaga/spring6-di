@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -31,8 +32,15 @@ public class CustomerServiceImpl implements CustomerService {
                 .lastModifiedDate(LocalDateTime.now())
                 .build();
 
+        Customer customer3 = Customer.builder().id(UUID.randomUUID())
+                .version(1)
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .build();
+
         customerMap.put(customer1.getId(), customer1);
         customerMap.put(customer2.getId(), customer2);
+        customerMap.put(customer3.getId(), customer3);
     }
 
     @Override
@@ -72,6 +80,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void removeCustomerById(UUID customerId) {
         customerMap.remove(customerId);
+    }
+
+    @Override
+    public void patchCustomerById(UUID customerId, Customer customer) {
+        Customer existingCustomer = customerMap.get(customerId);
+        if (StringUtils.hasText(existingCustomer.getCustomerName())){
+            existingCustomer.setCustomerName(customer.getCustomerName());
+            existingCustomer.setLastModifiedDate(LocalDateTime.now());
+            existingCustomer.setVersion(existingCustomer.getVersion() + 1);
+        }
+        customerMap.put(customerId, existingCustomer);
+
     }
 
 
