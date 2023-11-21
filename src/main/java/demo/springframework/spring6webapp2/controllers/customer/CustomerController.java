@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +42,11 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity handlePost(@RequestBody Customer customer){
         Customer customerSaved = customerService.saveNewCustomer(customer);
-        return new ResponseEntity(HttpStatus.CREATED);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location","/api/v1/customer/" + customerSaved.getId() );
+
+        return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
 }
