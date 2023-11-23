@@ -6,10 +6,13 @@ import demo.springframework.spring6webapp2.models.customer.Customer;
 import demo.springframework.spring6webapp2.services.customer.CustomerService;
 import demo.springframework.spring6webapp2.services.customer.CustomerServiceImpl;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -44,11 +48,37 @@ class CustomerControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Captor
+    ArgumentCaptor<UUID> uuidArgumentCaptor;
+
+    @Captor
+    ArgumentCaptor<Customer> customerArgumentCaptor;
+
     CustomerServiceImpl customerServiceImpl ;
 
     @BeforeEach
     void setUp(){
         customerServiceImpl = new CustomerServiceImpl();
+    }
+
+    @Test
+    void testPatchCustomer() throws Exception {
+        Customer testCustomer = customerServiceImpl.listCustomers().get(0);
+
+        Map<String, Object> customer = new HashMap<>();
+        customer.put("customerName", "New Customer");
+
+        mockMvc.perform(patch("/api/v1/customer/"+ testCustomer.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customer))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(customerService).patchCustomerById(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
+
+        assertThat(testCustomer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+        assertThat(customer.get("customerName")).isEqualTo(customerArgumentCaptor.getValue().getCustomerName());
+
     }
 
     @Test
@@ -59,12 +89,9 @@ class CustomerControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        ArgumentCaptor<UUID> uuidArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(customerService).removeCustomerById(uuidArgumentCaptor.capture());
 
         assertThat(testCustomer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
-
-
     }
 
     @Test
@@ -77,11 +104,7 @@ class CustomerControllerTest {
                 .content(objectMapper.writeValueAsString(testCustomer)))
                 .andExpect(status().isNoContent());
 
-
         verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
-
-
-
 
     }
     @Test
@@ -98,8 +121,6 @@ class CustomerControllerTest {
                 .content(objectMapper.writeValueAsString(customer)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
-
-
     }
     @Test
     void testListCustomer() throws Exception {
