@@ -32,6 +32,18 @@ class CustomerControllerTest {
     CustomerServiceImpl customerServiceImpl = new CustomerServiceImpl();
 
     @Test
+    void getListCustomer() throws Exception {
+        given(customerService.listCustomers()).willReturn(customerServiceImpl.listCustomers());
+
+        mockMvc.perform(get("/api/v1/customer")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(3)));
+
+
+    }
+    @Test
     void getCustomerById() throws Exception {
         Customer testCustomer = customerServiceImpl.listCustomers().get(0);
 
