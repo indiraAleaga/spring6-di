@@ -1,6 +1,8 @@
 package demo.springframework.spring6webapp2.controllers.customer;
 
+import demo.springframework.spring6webapp2.models.customer.Customer;
 import demo.springframework.spring6webapp2.services.customer.CustomerService;
+import demo.springframework.spring6webapp2.services.customer.CustomerServiceImpl;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +11,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CustomerController.class)
@@ -23,10 +29,16 @@ class CustomerControllerTest {
     @MockBean
     CustomerService customerService;
 
+    CustomerServiceImpl customerServiceImpl = new CustomerServiceImpl();
+
     @Test
     void getCustomerById() throws Exception {
+        Customer testCustomer = customerServiceImpl.listCustomers().get(0);
+
+        given(customerService.getCustomerById(any(UUID.class))).willReturn(testCustomer);
         mockMvc.perform(get("/api/v1/customer/" + UUID.randomUUID())
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }
