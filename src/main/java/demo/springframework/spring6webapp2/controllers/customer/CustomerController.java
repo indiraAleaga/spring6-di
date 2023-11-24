@@ -1,6 +1,7 @@
 package demo.springframework.spring6webapp2.controllers.customer;
 
 
+import demo.springframework.spring6webapp2.exceptions.NotFoundException;
 import demo.springframework.spring6webapp2.models.customer.Customer;
 import demo.springframework.spring6webapp2.services.customer.CustomerService;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +44,7 @@ public class CustomerController {
 
         log.debug("Get customerId by Id - in controller");
 
-        return customerService.getCustomerById(customerId);
+        return customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(CUSTOMER_PATH)
@@ -80,4 +82,6 @@ public class CustomerController {
         return new ResponseEntity( HttpStatus.NO_CONTENT);
 
     }
+
+
 }

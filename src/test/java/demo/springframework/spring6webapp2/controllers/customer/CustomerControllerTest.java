@@ -2,12 +2,14 @@ package demo.springframework.spring6webapp2.controllers.customer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import demo.springframework.spring6webapp2.exceptions.NotFoundException;
 import demo.springframework.spring6webapp2.models.customer.Customer;
 import demo.springframework.spring6webapp2.services.customer.CustomerService;
 import demo.springframework.spring6webapp2.services.customer.CustomerServiceImpl;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +61,17 @@ class CustomerControllerTest {
     @BeforeEach
     void setUp(){
         customerServiceImpl = new CustomerServiceImpl();
+    }
+
+    @Test
+    void getCustomerByIdNotFound() throws Exception {
+
+        given(customerService.getCustomerById(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
     }
 
     @Test
@@ -138,7 +151,7 @@ class CustomerControllerTest {
     void testGetCustomerById() throws Exception {
         Customer testCustomer = customerServiceImpl.listCustomers().get(0);
 
-        given(customerService.getCustomerById(testCustomer.getId())).willReturn(testCustomer);
+        given(customerService.getCustomerById(testCustomer.getId())).willReturn(Optional.of(testCustomer));
 
         mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, testCustomer.getId())
                 .accept(MediaType.APPLICATION_JSON))
