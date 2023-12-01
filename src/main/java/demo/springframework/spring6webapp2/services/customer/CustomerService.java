@@ -1,22 +1,22 @@
 package demo.springframework.spring6webapp2.services.customer;
 
-import demo.springframework.spring6webapp2.models.customer.Customer;
+import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerService {
 
-    List<Customer> listCustomers();
+    List<CustomerDTO> listCustomers();
 
-    Optional<Customer> getCustomerById(UUID id);
+    Optional<CustomerDTO> getCustomerById(UUID id);
 
 
-    Customer saveNewCustomer(Customer customer);
+    CustomerDTO saveNewCustomer(CustomerDTO customer);
 
-    void updateCustomerById(UUID customerId, Customer customer);
+    Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customer);
 
-    void removeCustomerById(UUID customerId);
+    boolean removeCustomerById(UUID customerId);
 
-    void patchCustomerById(UUID customerId, Customer customer);
+    Optional<CustomerDTO> patchCustomerById(UUID customerId, CustomerDTO customer);
 }
