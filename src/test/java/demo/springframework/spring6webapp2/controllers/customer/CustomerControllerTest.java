@@ -1,5 +1,6 @@
 package demo.springframework.spring6webapp2.controllers.customer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
 import demo.springframework.spring6webapp2.repositories.customer.CustomerRepository;
@@ -65,6 +66,20 @@ class CustomerControllerTest {
     }
 
     @Test
+    void createCustomerNullName() throws Exception {
+
+        CustomerDTO customer = CustomerDTO.builder().build();
+
+        given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.listCustomers().get(0));
+
+        mockMvc.perform(post(CustomerController.CUSTOMER_PATH )
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(customer)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void getCustomerByIdNotFound() throws Exception {
 
         given(customerService.getCustomerById(any(UUID.class))).willReturn(Optional.empty());
@@ -82,6 +97,8 @@ class CustomerControllerTest {
         Map<String, Object> customer = new HashMap<>();
         customer.put("customerName", "New Customer");
 
+        given(customerService.patchCustomerById(any(), any())).willReturn(Optional.of(testCustomer));
+
         mockMvc.perform(patch(CustomerController.CUSTOMER_PATH_ID, testCustomer.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customer))
@@ -98,6 +115,7 @@ class CustomerControllerTest {
     @Test
     void testDeleteCustomer() throws Exception {
         CustomerDTO testCustomer = customerServiceImpl.listCustomers().get(0);
+        given(customerService.removeCustomerById(any())).willReturn(true);
 
         mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID,  testCustomer.getId())
                 .accept(MediaType.APPLICATION_JSON))
