@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -72,11 +73,13 @@ class CustomerControllerTest {
 
         given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.listCustomers().get(0));
 
-        mockMvc.perform(post(CustomerController.CUSTOMER_PATH )
+        MvcResult result = mockMvc.perform(post(CustomerController.CUSTOMER_PATH )
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest()).andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 
     @Test
