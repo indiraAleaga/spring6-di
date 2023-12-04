@@ -77,7 +77,8 @@ class CustomerControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)))
-                .andExpect(status().isBadRequest()).andReturn();
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(2))).andReturn();
 
         System.out.println(result.getResponse().getContentAsString());
     }
