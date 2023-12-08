@@ -15,7 +15,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
 @Builder
@@ -39,6 +41,10 @@ public class Customer {
     @Size(max = 50)
     @Column(length = 50)
     private String customerName;
+
+    @CreationTimestamp
     private LocalDateTime createdDate;
+
+    @UpdateTimestamp
     private LocalDateTime lastModifiedDate;
 }
