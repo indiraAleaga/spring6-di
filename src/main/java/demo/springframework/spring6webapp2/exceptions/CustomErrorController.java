@@ -1,5 +1,6 @@
 package demo.springframework.spring6webapp2.exceptions;
 
+import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,21 @@ public class CustomErrorController {
 
     @ExceptionHandler
     ResponseEntity handleJPAViolation(TransactionSystemException exception){
-        return ResponseEntity.badRequest().build();
+        ResponseEntity.BodyBuilder responseEntity = ResponseEntity.badRequest();
+
+        if (exception.getCause().getCause() instanceof ConstraintViolationException){
+            ConstraintViolationException ve = (ConstraintViolationException) exception.getCause().getCause();
+            List listError = ve.getConstraintViolations().stream()
+                    .map(constraintViolation -> {
+                        Map<String, String> errorMap = new HashMap<>();
+                        errorMap.put(constraintViolation.getPropertyPath().toString(),
+                                constraintViolation.getMessage());
+                        return errorMap;
+                    }).collect(Collectors.toList());
+            return responseEntity.body(listError);
+        }
+
+        return responseEntity.build();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

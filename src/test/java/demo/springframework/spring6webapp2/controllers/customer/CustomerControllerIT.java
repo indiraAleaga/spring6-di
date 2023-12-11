@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -66,12 +67,14 @@ class CustomerControllerIT {
         Map<String, Object> customerMap = new HashMap<>();
         customerMap.put("customerName", "New Name 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
-        mockMvc.perform(patch(CustomerController.CUSTOMER_PATH_ID, customer.getId())
+       MvcResult result =  mockMvc.perform(patch(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customerMap)))
-                .andExpect(status().isBadRequest()).
-                andExpect(jsonPath("$.length()", is(1)));
+                .andExpect(status().isBadRequest())
+               .andExpect(jsonPath("$.length()", is(1)))
+               .andReturn();
+       System.out.println(result.getResponse().getContentAsString());
 
     }
 
