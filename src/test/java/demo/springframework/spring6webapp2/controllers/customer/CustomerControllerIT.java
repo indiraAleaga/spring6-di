@@ -62,10 +62,12 @@ class CustomerControllerIT {
 
     @Test
     void testListCustomerByName() throws Exception {
-        mockMvc.perform(get(CustomerController.CUSTOMER_PATH)
-                .queryParam("customerName", "Jane Doe"))
+        MvcResult result = mockMvc.perform(get(CustomerController.CUSTOMER_PATH)
+                .queryParam("customerName", "Doe"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size", is(1)));
+                .andExpect(jsonPath("$.size()", is(2)))
+                .andReturn();
+        System.out.println(result.getResponse().getContentAsString());
 
     }
 

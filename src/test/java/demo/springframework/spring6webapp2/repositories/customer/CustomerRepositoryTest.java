@@ -22,6 +22,13 @@ class CustomerRepositoryTest {
     BootStrapData bootStrapData;
 
     @Test
+    void testGetCustomerByName() {
+        List<Customer> list = customerRepository.findAllByCustomerNameIsLikeIgnoreCase("%Doe%");
+
+        assertThat(list.size()).isEqualTo(2);
+    }
+
+    @Test
     void testSaveCustomerNameTooLong() {
         assertThrows(ConstraintViolationException.class, () -> {
             Customer customer = customerRepository.save(Customer.builder()

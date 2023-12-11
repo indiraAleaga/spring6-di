@@ -1,8 +1,10 @@
 package demo.springframework.spring6webapp2.services.customer;
 
+import demo.springframework.spring6webapp2.entities.customer.Customer;
 import demo.springframework.spring6webapp2.mappers.customer.CustomerMapper;
 import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
 import demo.springframework.spring6webapp2.repositories.customer.CustomerRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,10 +25,21 @@ public class CustomerServiceJPA implements CustomerService {
 
     @Override
     public List<CustomerDTO> listCustomers(String customerName) {
-        return customerRepository.findAll()
-                .stream()
+        List<Customer> customerList;
+        if (StringUtils.hasText(customerName)){
+            customerList = listCustomerByName(customerName);
+
+        }else {
+            customerList = customerRepository.findAll();
+
+        }
+        return customerList.stream()
                 .map(customerMapper::customerToCustomerDto)
                 .collect(Collectors.toList());
+    }
+
+   public List<Customer> listCustomerByName(String customerName) {
+        return customerRepository.findAllByCustomerNameIsLikeIgnoreCase("%" + customerName + "%");
     }
 
     @Override
