@@ -22,7 +22,7 @@ public class CustomerServiceJPA implements CustomerService {
     private final CustomerMapper customerMapper;
 
     @Override
-    public List<CustomerDTO> listCustomers() {
+    public List<CustomerDTO> listCustomers(String customerName) {
         return customerRepository.findAll()
                 .stream()
                 .map(customerMapper::customerToCustomerDto)
