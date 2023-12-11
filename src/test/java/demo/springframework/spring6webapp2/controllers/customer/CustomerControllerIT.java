@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,6 +60,14 @@ class CustomerControllerIT {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
+    @Test
+    void testListCustomerByName() throws Exception {
+        mockMvc.perform(get(CustomerController.CUSTOMER_PATH)
+                .queryParam("customerName", "Jane Doe"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size", is(1)));
+
+    }
 
     @Test
     void testPatchBeerBadName() throws Exception {
