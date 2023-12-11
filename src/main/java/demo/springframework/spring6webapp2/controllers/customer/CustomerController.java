@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping(CUSTOMER_PATH)
-    public List<CustomerDTO> listCustomers(){
+    public List<CustomerDTO> listCustomers(@RequestParam(required = false ) String customerName){
         return customerService.listCustomers();
     }
 

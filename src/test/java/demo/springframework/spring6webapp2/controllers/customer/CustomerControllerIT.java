@@ -209,13 +209,13 @@ class CustomerControllerIT {
     @Test
     void testEmptyList() {
         customerRepository.deleteAll();
-        List<CustomerDTO> dtos = customerController.listCustomers();
+        List<CustomerDTO> dtos = customerController.listCustomers(null);
         assertThat(dtos.size()).isEqualTo(0);
     }
 
     @Test
     void testListCustomer() {
-        List<CustomerDTO> dtos = customerController.listCustomers();
+        List<CustomerDTO> dtos = customerController.listCustomers(null);
         assertThat(dtos.size()).isEqualTo(2);
     }
 
