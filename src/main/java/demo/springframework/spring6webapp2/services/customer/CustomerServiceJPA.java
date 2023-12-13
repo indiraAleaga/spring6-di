@@ -4,14 +4,16 @@ import demo.springframework.spring6webapp2.entities.customer.Customer;
 import demo.springframework.spring6webapp2.mappers.customer.CustomerMapper;
 import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
 import demo.springframework.spring6webapp2.repositories.customer.CustomerRepository;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+import javax.swing.SortOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,21 +29,20 @@ public class CustomerServiceJPA implements CustomerService {
     private static final Integer PAGE_SIZE = 25;
 
     @Override
-    public List<CustomerDTO> listCustomers(String customerName, Integer pageNumber, Integer pageSize) {
+    public Page<CustomerDTO> listCustomers(String customerName, Integer pageNumber, Integer pageSize) {
 
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
 
-
-        List<Customer> customerList;
+        Page<Customer> customerList;
         if (StringUtils.hasText(customerName)){
-            customerList = listCustomerByName(customerName);
+            customerList = listCustomerByName(customerName, pageRequest);
 
         }else {
-            customerList = customerRepository.findAll();
+            customerList = customerRepository.findAll(pageRequest);
 
         }
-        return customerList.stream()
-                .map(customerMapper::customerToCustomerDto)
-                .collect(Collectors.toList());
+        return customerList.map(customerMapper:: customerToCustomerDto);
+
     }
 
     public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize){
@@ -63,11 +64,13 @@ public class CustomerServiceJPA implements CustomerService {
             queryPageSize = pageSize;
         }
 
-        return PageRequest.of(queryPageNumber, queryPageSize);
+        Sort sort = Sort.by(Sort.Order.asc("customerName"));
+
+        return PageRequest.of(queryPageNumber, queryPageSize, sort);
     }
 
-   public List<Customer> listCustomerByName(String customerName) {
-        return customerRepository.findAllByCustomerNameIsLikeIgnoreCase("%" + customerName + "%");
+   public Page listCustomerByName(String customerName, PageRequest pageRequest) {
+        return customerRepository.findAllByCustomerNameIsLikeIgnoreCase("%" + customerName + "%", pageRequest);
     }
 
     @Override

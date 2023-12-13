@@ -4,10 +4,10 @@ package demo.springframework.spring6webapp2.controllers.customer;
 import demo.springframework.spring6webapp2.exceptions.NotFoundException;
 import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
 import demo.springframework.spring6webapp2.services.customer.CustomerService;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +33,10 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping(CUSTOMER_PATH)
-    public List<CustomerDTO> listCustomers(@RequestParam(required = false) String customerName,
+    public Page<CustomerDTO> listCustomers(@RequestParam(required = false) String customerName,
                                            @RequestParam(required = false)Integer pageNumber,
                                            @RequestParam(required = false)Integer pageSize){
-        return customerService.listCustomers(customerName, 1, 25);
+        return customerService.listCustomers(customerName, pageNumber, pageSize);
     }
 
     @GetMapping(CUSTOMER_PATH_ID)

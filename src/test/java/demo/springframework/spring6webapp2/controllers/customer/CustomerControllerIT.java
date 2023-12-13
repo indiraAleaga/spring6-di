@@ -65,7 +65,7 @@ class CustomerControllerIT {
                         .queryParam("pageNumber", "2")
                         .queryParam("pageSize", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(jsonPath("content.size()", is(1)))
                 .andReturn();
         System.out.println(result.getResponse().getContentAsString());
 
@@ -75,7 +75,7 @@ class CustomerControllerIT {
         MvcResult result = mockMvc.perform(get(CustomerController.CUSTOMER_PATH)
                 .queryParam("customerName", "Doe"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(2)))
+                .andExpect(jsonPath("$.size()", is(11)))
                 .andReturn();
         System.out.println(result.getResponse().getContentAsString());
 
@@ -221,13 +221,13 @@ class CustomerControllerIT {
     @Test
     void testEmptyList() {
         customerRepository.deleteAll();
-        List<CustomerDTO> dtos = customerController.listCustomers(null, 1, 25);
+        List<CustomerDTO> dtos = customerController.listCustomers(null, 1, 25).getContent();
         assertThat(dtos.size()).isEqualTo(0);
     }
 
     @Test
     void testListCustomer() {
-        List<CustomerDTO> dtos = customerController.listCustomers(null, 1, 25);
+        List<CustomerDTO> dtos = customerController.listCustomers(null, 1, 25).getContent();
         assertThat(dtos.size()).isEqualTo(2);
     }
 

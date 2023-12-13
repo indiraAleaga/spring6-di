@@ -1,13 +1,13 @@
 package demo.springframework.spring6webapp2.services.customer;
 
 import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 
 public interface CustomerService {
 
-    List<CustomerDTO> listCustomers(String customerName, Integer pageNumber, Integer pageSize);
+    Page<CustomerDTO> listCustomers(String customerName, Integer pageNumber, Integer pageSize);
 
     Optional<CustomerDTO> getCustomerById(UUID id);
 
