@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,8 +23,14 @@ public class CustomerServiceJPA implements CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
 
+    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_SIZE = 25;
+
     @Override
     public List<CustomerDTO> listCustomers(String customerName, Integer pageNumber, Integer pageSize) {
+
+
+
         List<Customer> customerList;
         if (StringUtils.hasText(customerName)){
             customerList = listCustomerByName(customerName);
@@ -35,6 +42,28 @@ public class CustomerServiceJPA implements CustomerService {
         return customerList.stream()
                 .map(customerMapper::customerToCustomerDto)
                 .collect(Collectors.toList());
+    }
+
+    public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize){
+        int queryPageNumber;
+        int queryPageSize;
+
+        if (pageNumber != null && pageNumber > 0) {
+            queryPageNumber = pageNumber -1;
+
+        } else {
+            queryPageNumber = PAGE_NUMBER;
+        }
+        if (pageSize == null ){
+            queryPageSize = PAGE_SIZE;
+        }else {
+            if (pageSize > 1000){
+                pageSize = 1000;
+            }
+            queryPageSize = pageSize;
+        }
+
+        return PageRequest.of(queryPageNumber, queryPageSize);
     }
 
    public List<Customer> listCustomerByName(String customerName) {
