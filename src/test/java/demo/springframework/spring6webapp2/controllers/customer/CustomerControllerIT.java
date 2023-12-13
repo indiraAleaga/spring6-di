@@ -7,7 +7,6 @@ import demo.springframework.spring6webapp2.mappers.customer.CustomerMapper;
 import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
 import demo.springframework.spring6webapp2.repositories.customer.CustomerRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +58,18 @@ class CustomerControllerIT {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
+    @Test
+    void testListCustomerByNamePage2() throws Exception {
+        MvcResult result = mockMvc.perform(get(CustomerController.CUSTOMER_PATH)
+                        .queryParam("customerName", "Doe")
+                        .queryParam("pageNumber", "2")
+                        .queryParam("pageSize", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(1)))
+                .andReturn();
+        System.out.println(result.getResponse().getContentAsString());
+
+    }
     @Test
     void testListCustomerByName() throws Exception {
         MvcResult result = mockMvc.perform(get(CustomerController.CUSTOMER_PATH)
@@ -211,13 +221,13 @@ class CustomerControllerIT {
     @Test
     void testEmptyList() {
         customerRepository.deleteAll();
-        List<CustomerDTO> dtos = customerController.listCustomers(null);
+        List<CustomerDTO> dtos = customerController.listCustomers(null, 1, 25);
         assertThat(dtos.size()).isEqualTo(0);
     }
 
     @Test
     void testListCustomer() {
-        List<CustomerDTO> dtos = customerController.listCustomers(null);
+        List<CustomerDTO> dtos = customerController.listCustomers(null, 1, 25);
         assertThat(dtos.size()).isEqualTo(2);
     }
 

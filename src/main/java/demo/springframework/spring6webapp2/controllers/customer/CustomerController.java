@@ -33,8 +33,10 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping(CUSTOMER_PATH)
-    public List<CustomerDTO> listCustomers(@RequestParam(required = false ) String customerName){
-        return customerService.listCustomers(customerName);
+    public List<CustomerDTO> listCustomers(@RequestParam(required = false) String customerName,
+                                           @RequestParam(required = false)Integer pageNumber,
+                                           @RequestParam(required = false)Integer pageSize){
+        return customerService.listCustomers(customerName, 1, 25);
     }
 
     @GetMapping(CUSTOMER_PATH_ID)

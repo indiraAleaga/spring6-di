@@ -45,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> listCustomers(String customerName) {
+    public List<CustomerDTO> listCustomers(String customerName, Integer pageNumber, Integer pageSize) {
         return  new ArrayList<>(customerMap.values());
     }
 

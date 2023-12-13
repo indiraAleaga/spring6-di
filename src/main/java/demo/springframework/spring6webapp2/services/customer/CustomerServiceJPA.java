@@ -4,7 +4,6 @@ import demo.springframework.spring6webapp2.entities.customer.Customer;
 import demo.springframework.spring6webapp2.mappers.customer.CustomerMapper;
 import demo.springframework.spring6webapp2.models.customer.CustomerDTO;
 import demo.springframework.spring6webapp2.repositories.customer.CustomerRepository;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,7 +23,7 @@ public class CustomerServiceJPA implements CustomerService {
     private final CustomerMapper customerMapper;
 
     @Override
-    public List<CustomerDTO> listCustomers(String customerName) {
+    public List<CustomerDTO> listCustomers(String customerName, Integer pageNumber, Integer pageSize) {
         List<Customer> customerList;
         if (StringUtils.hasText(customerName)){
             customerList = listCustomerByName(customerName);

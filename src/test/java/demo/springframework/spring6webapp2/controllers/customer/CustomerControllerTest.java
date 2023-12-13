@@ -70,7 +70,7 @@ class CustomerControllerTest {
 
         CustomerDTO customer = CustomerDTO.builder().build();
 
-        given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.listCustomers(null).get(0));
+        given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.listCustomers(null, 1,25 ).get(0));
 
         MvcResult result = mockMvc.perform(post(CustomerController.CUSTOMER_PATH )
                         .accept(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ class CustomerControllerTest {
 
     @Test
     void testPatchCustomer() throws Exception {
-        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null).get(0);
+        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null,1 ,25 ).get(0);
 
         Map<String, Object> customer = new HashMap<>();
         customer.put("customerName", "New Customer");
@@ -117,7 +117,7 @@ class CustomerControllerTest {
 
     @Test
     void testDeleteCustomer() throws Exception {
-        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null).get(0);
+        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null,1 ,25 ).get(0);
         given(customerService.removeCustomerById(any())).willReturn(true);
 
         mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID,  testCustomer.getId())
@@ -131,7 +131,7 @@ class CustomerControllerTest {
 
     @Test
     void testUpdateCustomer() throws Exception {
-        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null).get(0);
+        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null,1 , 25).get(0);
 
         given(customerService.updateCustomerById(any(), any())).willReturn(Optional.of(testCustomer));
 
@@ -150,7 +150,7 @@ class CustomerControllerTest {
                 .customerName("Customer")
                 .build();
 
-        given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.listCustomers(null).get(0));
+        given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.listCustomers(null,1 ,25 ).get(0));
 
         mockMvc.perform(post(CustomerController.CUSTOMER_PATH )
                 .accept(MediaType.APPLICATION_JSON)
@@ -161,7 +161,7 @@ class CustomerControllerTest {
     }
     @Test
     void testListCustomer() throws Exception {
-        given(customerService.listCustomers(null)).willReturn(customerServiceImpl.listCustomers(null));
+        given(customerService.listCustomers(null,1 ,25 )).willReturn(customerServiceImpl.listCustomers(null,1 ,25 ));
 
         mockMvc.perform(get(CustomerController.CUSTOMER_PATH)
                         .accept(MediaType.APPLICATION_JSON))
@@ -173,7 +173,7 @@ class CustomerControllerTest {
     }
     @Test
     void testGetCustomerById() throws Exception {
-        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null).get(0);
+        CustomerDTO testCustomer = customerServiceImpl.listCustomers(null,1 ,25 ).get(0);
 
         given(customerService.getCustomerById(testCustomer.getId())).willReturn(Optional.of(testCustomer));
 
